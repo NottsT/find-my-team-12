@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나의 팀 찾기</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", sans-serif;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+      animation: fadeInUp 0.4s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // 아이콘 컴포넌트
+    const Search = ({ size = 18 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    );
+    const User = ({ size = 20 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    );
+    const Users = ({ size = 32 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    );
+    const AlertCircle = ({ size = 18 }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    );
+
+    // 학생 데이터 (기존 데이터 유지)
+    const studentData = [
+      { team: "1팀", dept: "경찰행정학과", name: "김예성" },
+      { team: "1팀", dept: "자유전공학부", name: "최태연" },
+      { team: "1팀", dept: "자유전공학부", name: "홍경필" },
+      { team: "1팀", dept: "자유전공학부", name: "차동훈" },
+      { team: "1팀", dept: "자유전공학부", name: "김지후" },
+      { team: "1팀", dept: "자유전공학부", name: "문혁빈" },
+      { team: "1팀", dept: "자유전공학부", name: "김소윤" },
+      { team: "1팀", dept: "자유전공학부", name: "박솔희" },
+      { team: "1팀", dept: "자유전공학부", name: "권예원" },
+      { team: "2팀", dept: "법학과", name: "정태신" },
+      { team: "2팀", dept: "자유전공학부", name: "윤주현" },
+      { team: "2팀", dept: "자유전공학부", name: "김준성" },
+      { team: "2팀", dept: "자유전공학부", name: "박예원" },
+      { team: "2팀", dept: "자유전공학부", name: "조강혁" },
+      { team: "2팀", dept: "자유전공학부", name: "송근호" },
+      { team: "2팀", dept: "자유전공학부", name: "최수인" },
+      { team: "2팀", dept: "자유전공학부", name: "김도연" },
+      { team: "3팀", dept: "행정학과", name: "김민경" },
+      { team: "3팀", dept: "자유전공학부", name: "박찬주" },
+      { team: "3팀", dept: "자유전공학부", name: "한영재" },
+      { team: "3팀", dept: "자유전공학부", name: "송찬웅" },
+      { team: "3팀", dept: "자유전공학부", name: "김도욱" },
+      { team: "3팀", dept: "자유전공학부", name: "문채린" },
+      { team: "3팀", dept: "자유전공학부", name: "김본서" },
+      { team: "3팀", dept: "자유전공학부", name: "이세영" },
+      { team: "3팀", dept: "자유전공학부", name: "김윤서" },
+      { team: "4팀", dept: "AI•SW학부", name: "유시영" },
+      { team: "4팀", dept: "자유전공학부", name: "박지훈" },
+      { team: "4팀", dept: "자유전공학부", name: "이아원" },
+      { team: "4팀", dept: "자유전공학부", name: "이채원" },
+      { team: "4팀", dept: "자유전공학부", name: "이세정" },
+      { team: "4팀", dept: "자유전공학부", name: "기하은" },
+      { team: "4팀", dept: "자유전공학부", name: "서혜주" },
+      { team: "4팀", dept: "자유전공학부", name: "한지윤" },
+      { team: "4팀", dept: "자유전공학부", name: "신나라" },
+      { team: "5팀", dept: "스포츠산업학과", name: "임재훈" },
+      { team: "5팀", dept: "자유전공학부", name: "송현동" },
+      { team: "5팀", dept: "자유전공학부", name: "임예지" },
+      { team: "5팀", dept: "자유전공학부", name: "김서연" },
+      { team: "5팀", dept: "자유전공학부", name: "김민정", studentId: "20264439" },
+      { team: "5팀", dept: "자유전공학부", name: "노민경" },
+      { team: "5팀", dept: "자유전공학부", name: "조현경" },
+      { team: "5팀", dept: "자유전공학부", name: "백다인" },
+      { team: "5팀", dept: "자유전공학부", name: "박성화" },
+      { team: "6팀", dept: "첨단에너지공학과", name: "임정언" },
+      { team: "6팀", dept: "자유전공학부", name: "예상유" },
+      { team: "6팀", dept: "자유전공학부", name: "김태양" },
+      { team: "6팀", dept: "자유전공학부", name: "김승훈" },
+      { team: "6팀", dept: "자유전공학부", name: "정재형" },
+      { team: "6팀", dept: "자유전공학부", name: "문승원" },
+      { team: "6팀", dept: "자유전공학부", name: "신정민" },
+      { team: "6팀", dept: "자유전공학부", name: "박권성" },
+      { team: "6팀", dept: "자유전공학부", name: "김민규" },
+      { team: "7팀", dept: "체육학과", name: "범하진" },
+      { team: "7팀", dept: "자유전공학부", name: "박건우" },
+      { team: "7팀", dept: "자유전공학부", name: "박창건" },
+      { team: "7팀", dept: "자유전공학부", name: "박지후" },
+      { team: "7팀", dept: "자유전공학부", name: "김아현" },
+      { team: "7팀", dept: "자유전공학부", name: "조해든" },
+      { team: "7팀", dept: "자유전공학부", name: "김은혜" },
+      { team: "7팀", dept: "자유전공학부", name: "동윤성" },
+      { team: "7팀", dept: "자유전공학부", name: "김민정", studentId: "20264419" },
+      { team: "8팀", dept: "자유전공학부", name: "김재선" },
+      { team: "8팀", dept: "자유전공학부", name: "이지승" },
+      { team: "8팀", dept: "자유전공학부", name: "김주훈" },
+      { team: "8팀", dept: "자유전공학부", name: "소예준" },
+      { team: "8팀", dept: "자유전공학부", name: "오태환" },
+      { team: "8팀", dept: "자유전공학부", name: "정윤희" },
+      { team: "8팀", dept: "자유전공학부", name: "강수연" },
+      { team: "8팀", dept: "자유전공학부", name: "황현정" },
+      { team: "9팀", dept: "자유전공학부", name: "강미란" },
+      { team: "9팀", dept: "자유전공학부", name: "서강희" },
+      { team: "9팀", dept: "자유전공학부", name: "오서린" },
+      { team: "9팀", dept: "자유전공학부", name: "문세영" },
+      { team: "9팀", dept: "자유전공학부", name: "양인정" },
+      { team: "9팀", dept: "자유전공학부", name: "정소라" },
+      { team: "9팀", dept: "자유전공학부", name: "김지우", studentId: "20264498" },
+      { team: "9팀", dept: "자유전공학부", name: "김정연" },
+      { team: "10팀", dept: "자유전공학부", name: "이수린" },
+      { team: "10팀", dept: "자유전공학부", name: "김현서" },
+      { team: "10팀", dept: "자유전공학부", name: "김지우", studentId: "20264527" },
+      { team: "10팀", dept: "자유전공학부", name: "이수진" },
+      { team: "10팀", dept: "자유전공학부", name: "임희선" },
+      { team: "10팀", dept: "자유전공학부", name: "박소은" },
+      { team: "10팀", dept: "자유전공학부", name: "김수정" },
+      { team: "10팀", dept: "자유전공학부", name: "한가온" },
+      { team: "11팀", dept: "자유전공학부", name: "김가은" },
+      { team: "11팀", dept: "자유전공학부", name: "김율" },
+      { team: "11팀", dept: "자유전공학부", name: "정현도" },
+      { team: "11팀", dept: "자유전공학부", name: "전벼리" },
+      { team: "11팀", dept: "자유전공학부", name: "조예은" },
+      { team: "11팀", dept: "자유전공학부", name: "이다민" },
+      { team: "11팀", dept: "자유전공학부", name: "이주원" },
+      { team: "12팀", dept: "자유전공학부", name: "김민서" },
+      { team: "12팀", dept: "자유전공학부", name: "김희진" },
+      { team: "12팀", dept: "자유전공학부", name: "문예빈" },
+      { team: "12팀", dept: "자유전공학부", name: "유나희" },
+      { team: "12팀", dept: "자유전공학부", name: "김서진" },
+      { team: "12팀", dept: "자유전공학부", name: "김단용" },
+      { team: "12팀", dept: "자유전공학부", name: "강상명" },
+      { team: "13팀", dept: "자유전공학부", name: "김대환" },
+      { team: "13팀", dept: "자유전공학부", name: "이정안" },
+      { team: "13팀", dept: "자유전공학부", name: "김나슬" },
+      { team: "13팀", dept: "자유전공학부", name: "신혜연" },
+      { team: "13팀", dept: "자유전공학부", name: "김설아" },
+      { team: "13팀", dept: "자유전공학부", name: "장원" },
