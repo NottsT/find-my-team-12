@@ -9,7 +9,7 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif; }
+    body { font-family: -apple-system, sans-serif; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
   </style>
@@ -20,81 +20,66 @@
   <script type="text/babel">
     const { useState } = React;
 
-    const SearchIcon = () => (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-    );
-
-    const STUDENT_DATA = [
-      {team:"1팀",dept:"경찰행정학과",name:"김예성"},{team:"1팀",dept:"자유전공학부",name:"최태연"},{team:"1팀",dept:"자유전공학부",name:"홍경필"},{team:"1팀",dept:"자유전공학부",name:"차동훈"},{team:"1팀",dept:"자유전공학부",name:"김지후"},{team:"1팀",dept:"자유전공학부",name:"문혁빈"},{team:"1팀",dept:"자유전공학부",name:"김소윤"},{team:"1팀",dept:"자유전공학부",name:"박솔희"},{team:"1팀",dept:"자유전공학부",name:"권예원"},
-      {team:"2팀",dept:"법학과",name:"정태신"},{team:"2팀",dept:"자유전공학부",name:"윤주현"},{team:"2팀",dept:"자유전공학부",name:"김준성"},{team:"2팀",dept:"자유전공학부",name:"박예원"},{team:"2팀",dept:"자유전공학부",name:"조강혁"},{team:"2팀",dept:"자유전공학부",name:"송근호"},{team:"2팀",dept:"자유전공학부",name:"최수인"},{team:"2팀",dept:"자유전공학부",name:"김도연"},
-      {team:"3팀",dept:"행정학과",name:"김민경"},{team:"3팀",dept:"자유전공학부",name:"박찬주"},{team:"3팀",dept:"자유전공학부",name:"한영재"},{team:"3팀",dept:"자유전공학부",name:"송찬웅"},{team:"3팀",dept:"자유전공학부",name:"김도욱"},{team:"3팀",dept:"자유전공학부",name:"문채린"},{team:"3팀",dept:"자유전공학부",name:"김본서"},{team:"3팀",dept:"자유전공학부",name:"이세영"},{team:"3팀",dept:"자유전공학부",name:"김윤서"},
-      {team:"4팀",dept:"AI•SW학부",name:"유시영"},{team:"4팀",dept:"자유전공학부",name:"박지훈"},{team:"4팀",dept:"자유전공학부",name:"이아원"},{team:"4팀",dept:"자유전공학부",name:"이채원"},{team:"4팀",dept:"자유전공학부",name:"이세정"},{team:"4팀",dept:"자유전공학부",name:"기하은"},{team:"4팀",dept:"자유전공학부",name:"서혜주"},{team:"4팀",dept:"자유전공학부",name:"한지윤"},{team:"4팀",dept:"자유전공학부",name:"신나라"},
-      {team:"5팀",dept:"스포츠산업학과",name:"임재훈"},{team:"5팀",dept:"자유전공학부",name:"송현동"},{team:"5팀",dept:"자유전공학부",name:"임예지"},{team:"5팀",dept:"자유전공학부",name:"김서연"},{team:"5팀",dept:"자유전공학부",name:"김민정",id:"20264439"},{team:"5팀",dept:"자유전공학부",name:"노민경"},{team:"5팀",dept:"자유전공학부",name:"조현경"},{team:"5팀",dept:"자유전공학부",name:"백다인"},{team:"5팀",dept:"자유전공학부",name:"박성화"},
-      {team:"6팀",dept:"첨단에너지공학과",name:"임정언"},{team:"6팀",dept:"자유전공학부",name:"예상유"},{team:"6팀",dept:"자유전공학부",name:"김태양"},{team:"6팀",dept:"자유전공학부",name:"김승훈"},{team:"6팀",dept:"자유전공학부",name:"정재형"},{team:"6팀",dept:"자유전공학부",name:"문승원"},{team:"6팀",dept:"자유전공학부",name:"신정민"},{team:"6팀",dept:"자유전공학부",name:"박권성"},{team:"6팀",dept:"자유전공학부",name:"김민규"},
-      {team:"7팀",dept:"체육학과",name:"범하진"},{team:"7팀",dept:"자유전공학부",name:"박건우"},{team:"7팀",dept:"자유전공학부",name:"박창건"},{team:"7팀",dept:"자유전공학부",name:"박지후"},{team:"7팀",dept:"자유전공학부",name:"김아현"},{team:"7팀",dept:"자유전공학부",name:"조해든"},{team:"7팀",dept:"자유전공학부",name:"김은혜"},{team:"7팀",dept:"자유전공학부",name:"동윤성"},{team:"7팀",dept:"자유전공학부",name:"김민정",id:"20264119"},
-      {team:"8팀",dept:"자유전공학부",name:"김재선"},{team:"8팀",dept:"자유전공학부",name:"이지승"},{team:"8팀",dept:"자유전공학부",name:"김주훈"},{team:"8팀",dept:"자유전공학부",name:"소예준"},{team:"8팀",dept:"자유전공학부",name:"오태환"},{team:"8팀",dept:"자유전공학부",name:"정윤희"},{team:"8팀",dept:"자유전공학부",name:"강수연"},{team:"8팀",dept:"자유전공학부",name:"황현정"},
-      {team:"9팀",dept:"자유전공학부",name:"강미란"},{team:"9팀",dept:"자유전공학부",name:"서강희"},{team:"9팀",dept:"자유전공학부",name:"오서린"},{team:"9팀",dept:"자유전공학부",name:"문세영"},{team:"9팀",dept:"자유전공학부",name:"양인정"},{team:"9팀",dept:"자유전공학부",name:"정소라"},{team:"9팀",dept:"자유전공학부",name:"김지우",id:"20264498"},{team:"9팀",dept:"자유전공학부",name:"김정연"},
-      {team:"10팀",dept:"자유전공학부",name:"이수린"},{team:"10팀",dept:"자유전공학부",name:"김현서"},{team:"10팀",dept:"자유전공학부",name:"김지우",id:"20264527"},{team:"10팀",dept:"자유전공학부",name:"이수진"},{team:"10팀",dept:"자유전공학부",name:"임희선"},{team:"10팀",dept:"자유전공학부",name:"박소은"},{team:"10팀",dept:"자유전공학부",name:"김수정"},{team:"10팀",dept:"자유전공학부",name:"한가온"},
-      {team:"11팀",dept:"자유전공학부",name:"김가은"},{team:"11팀",dept:"자유전공학부",name:"김율"},{team:"11팀",dept:"자유전공학부",name:"정현도"},{team:"11팀",dept:"자유전공학부",name:"전벼리"},{team:"11팀",dept:"자유전공학부",name:"조예은"},{team:"11팀",dept:"자유전공학부",name:"이다민"},{team:"11팀",dept:"자유전공학부",name:"이주원"},
-      {team:"12팀",dept:"자유전공학부",name:"김민서"},{team:"12팀",dept:"자유전공학부",name:"김희진"},{team:"12팀",dept:"자유전공학부",name:"문예빈"},{team:"12팀",dept:"자유전공학부",name:"유나희"},{team:"12팀",dept:"자유전공학부",name:"김서진"},{team:"12팀",dept:"자유전공학부",name:"김단용"},{team:"12팀",dept:"자유전공학부",name:"강상명"},
-      {team:"13팀",dept:"자유전공학부",name:"김대환"},{team:"13팀",dept:"자유전공학부",name:"이정안"},{team:"13팀",dept:"자유전공학부",name:"김나슬"},{team:"13팀",dept:"자유전공학부",name:"신혜연"},{team:"13팀",dept:"자유전공학부",name:"김설아"},{team:"13팀",dept:"자유전공학부",name:"장원"},{team:"13팀",dept:"자유전공학부",name:"류시안"},
-      {team:"14팀",dept:"자유전공학부",name:"이가람"},{team:"14팀",dept:"자유전공학부",name:"손예원"},{team:"14팀",dept:"자유전공학부",name:"서수연"},{team:"14팀",dept:"자유전공학부",name:"김화빈"},{team:"14팀",dept:"자유전공학부",name:"강인구"},{team:"14팀",dept:"자유전공학부",name:"조수연"},{team:"14팀",dept:"자유전공학부",name:"오샛별"}
+    const DATA = [
+      {t:"1팀",d:"경찰행정학과",n:"김예성"},{t:"1팀",d:"자유전공학부",n:"최태연"},{t:"1팀",d:"자유전공학부",n:"홍경필"},{t:"1팀",d:"자유전공학부",n:"차동훈"},{t:"1팀",d:"자유전공학부",n:"김지후"},{t:"1팀",d:"자유전공학부",n:"문혁빈"},{t:"1팀",d:"자유전공학부",n:"김소윤"},{t:"1팀",d:"자유전공학부",n:"박솔희"},{t:"1팀",d:"자유전공학부",n:"권예원"},
+      {t:"2팀",d:"법학과",n:"정태신"},{t:"2팀",d:"자유전공학부",n:"윤주현"},{t:"2팀",d:"자유전공학부",n:"김준성"},{t:"2팀",d:"자유전공학부",n:"박예원"},{t:"2팀",d:"자유전공학부",n:"조강혁"},{t:"2팀",d:"자유전공학부",n:"송근호"},{t:"2팀",d:"자유전공학부",n:"최수인"},{t:"2팀",d:"자유전공학부",n:"김도연"},
+      {t:"3팀",d:"행정학과",n:"김민경"},{t:"3팀",d:"자유전공학부",n:"박찬주"},{t:"3팀",d:"자유전공학부",n:"한영재"},{t:"3팀",d:"자유전공학부",n:"송찬웅"},{t:"3팀",d:"자유전공학부",n:"김도욱"},{t:"3팀",d:"자유전공학부",n:"문채린"},{t:"3팀",d:"자유전공학부",n:"김본서"},{t:"3팀",d:"자유전공학부",n:"이세영"},{t:"3팀",d:"자유전공학부",n:"김윤서"},
+      {t:"4팀",d:"AI•SW학부",n:"유시영"},{t:"4팀",d:"자유전공학부",n:"박지훈"},{t:"4팀",d:"자유전공학부",n:"이아원"},{t:"4팀",d:"자유전공학부",n:"이채원"},{t:"4팀",d:"자유전공학부",n:"이세정"},{t:"4팀",d:"자유전공학부",n:"기하은"},{t:"4팀",d:"자유전공학부",n:"서혜주"},{t:"4팀",d:"자유전공학부",n:"한지윤"},{t:"4팀",d:"자유전공학부",n:"신나라"},
+      {t:"5팀",d:"스포츠산업학과",n:"임재훈"},{t:"5팀",d:"자유전공학부",n:"송현동"},{t:"5팀",d:"자유전공학부",n:"임예지"},{t:"5팀",d:"자유전공학부",n:"김서연"},{t:"5팀",d:"자유전공학부",n:"김민정",s:"20264439"},{t:"5팀",d:"자유전공학부",n:"노민경"},{t:"5팀",d:"자유전공학부",n:"조현경"},{t:"5팀",d:"자유전공학부",n:"백다인"},{t:"5팀",d:"자유전공학부",n:"박성화"},
+      {t:"6팀",d:"첨단에너지공학과",n:"임정언"},{t:"6팀",d:"자유전공학부",n:"예상유"},{t:"6팀",d:"자유전공학부",n:"김태양"},{t:"6팀",d:"자유전공학부",n:"김승훈"},{t:"6팀",d:"자유전공학부",n:"정재형"},{t:"6팀",d:"자유전공학부",n:"문승원"},{t:"6팀",d:"자유전공학부",n:"신정민"},{t:"6팀",d:"자유전공학부",n:"박권성"},{t:"6팀",d:"자유전공학부",n:"김민규"},
+      {t:"7팀",d:"체육학과",n:"범하진"},{t:"7팀",d:"자유전공학부",n:"박건우"},{t:"7팀",d:"자유전공학부",n:"박창건"},{t:"7팀",d:"자유전공학부",n:"박지후"},{t:"7팀",d:"자유전공학부",n:"김아현"},{t:"7팀",d:"자유전공학부",n:"조해든"},{t:"7팀",d:"자유전공학부",n:"김은혜"},{t:"7팀",d:"자유전공학부",n:"동윤성"},{t:"7팀",d:"자유전공학부",n:"김민정",s:"20264419"},
+      {t:"8팀",d:"자유전공학부",n:"김재선"},{t:"8팀",d:"자유전공학부",n:"이지승"},{t:"8팀",d:"자유전공학부",n:"김주훈"},{t:"8팀",d:"자유전공학부",n:"소예준"},{t:"8팀",d:"자유전공학부",n:"오태환"},{t:"8팀",d:"자유전공학부",n:"정윤희"},{t:"8팀",d:"자유전공학부",n:"강수연"},{t:"8팀",d:"자유전공학부",n:"황현정"},
+      {t:"9팀",d:"자유전공학부",n:"강미란"},{t:"9팀",d:"자유전공학부",n:"서강희"},{t:"9팀",d:"자유전공학부",n:"오서린"},{t:"9팀",d:"자유전공학부",n:"문세영"},{t:"9팀",d:"자유전공학부",n:"양인정"},{t:"9팀",d:"자유전공학부",n:"정소라"},{t:"9팀",d:"자유전공학부",n:"김지우",s:"20264498"},{t:"9팀",d:"자유전공학부",n:"김정연"},
+      {t:"10팀",d:"자유전공학부",n:"이수린"},{t:"10팀",d:"자유전공학부",n:"김현서"},{t:"10팀",d:"자유전공학부",n:"김지우",s:"20264527"},{t:"10팀",d:"자유전공학부",n:"이수진"},{t:"10팀",d:"자유전공학부",n:"임희선"},{t:"10팀",d:"자유전공학부",n:"박소은"},{t:"10팀",d:"자유전공학부",n:"김수정"},{t:"10팀",d:"자유전공학부",n:"한가온"},
+      {t:"11팀",d:"자유전공학부",n:"김가은"},{t:"11팀",d:"자유전공학부",n:"김율"},{t:"11팀",d:"자유전공학부",n:"정현도"},{t:"11팀",d:"자유전공학부",n:"전벼리"},{t:"11팀",d:"자유전공학부",n:"조예은"},{t:"11팀",d:"자유전공학부",n:"이다민"},{t:"11팀",d:"자유전공학부",n:"이주원"},
+      {t:"12팀",d:"자유전공학부",n:"김민서"},{t:"12팀",d:"자유전공학부",n:"김희진"},{t:"12팀",d:"자유전공학부",n:"문예빈"},{t:"12팀",d:"자유전공학부",n:"유나희"},{t:"12팀",d:"자유전공학부",n:"김서진"},{t:"12팀",d:"자유전공학부",n:"김단용"},{t:"12팀",d:"자유전공학부",n:"강상명"},
+      {t:"13팀",d:"자유전공학부",n:"김대환"},{t:"13팀",d:"자유전공학부",n:"이정안"},{t:"13팀",d:"자유전공학부",n:"김나슬"},{t:"13팀",d:"자유전공학부",n:"신혜연"},{t:"13팀",d:"자유전공학부",n:"김설아"},{t:"13팀",d:"자유전공학부",n:"장원"},{t:"13팀",d:"자유전공학부",n:"류시안"},
+      {t:"14팀",d:"자유전공학부",n:"이가람"},{t:"14팀",d:"자유전공학부",n:"손예원"},{t:"14팀",d:"자유전공학부",n:"서수연"},{t:"14팀",d:"자유전공학부",n:"김화빈"},{t:"14팀",d:"자유전공학부",n:"강인구"},{t:"14팀",d:"자유전공학부",n:"조수연"},{t:"14팀",d:"자유전공학부",n:"오샛별"}
     ];
 
     function App() {
       const [term, setTerm] = useState("");
-      const [results, setResults] = useState([]);
-      const [searched, setSearched] = useState(false);
+      const [res, setRes] = useState([]);
+      const [done, setDone] = useState(false);
 
-      const search = () => {
-        const input = term.trim().replace(/\s/g, "");
-        if (!input) return;
-        const found = STUDENT_DATA.filter(s => s.name === input);
-        setResults(found);
-        setSearched(true);
+      const find = () => {
+        if (!term.trim()) return;
+        const result = DATA.filter(s => s.n === term.trim().replace(/\s/g, ""));
+        setRes(result);
+        setDone(true);
       };
 
       return (
         <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <div className="bg-blue-600 p-8 text-white text-center">
-              <h1 className="text-3xl font-black mb-1">나의 팀 찾기</h1>
-              <p className="opacity-80">이름을 입력하여 팀을 조회하세요.</p>
+          <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-8 text-white text-center">
+              <h1 className="text-3xl font-black tracking-tighter">나의 팀 찾기</h1>
+              <p className="mt-2 opacity-80 text-sm">이름을 입력해 팀 배정을 확인하세요.</p>
             </div>
-            
             <div className="p-6">
-              <div className="flex gap-2 mb-6">
+              <div className="flex gap-2 mb-8">
                 <input
                   type="text"
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none text-lg transition-all"
+                  className="flex-1 px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-blue-500 focus:bg-white outline-none transition-all"
                   placeholder="이름 (예: 김민정)"
                   value={term}
-                  onChange={e => { setTerm(e.target.value); setSearched(false); }}
-                  onKeyDown={e => e.key === "Enter" && search()}
+                  onChange={e => {setTerm(e.target.value); setDone(false);}}
+                  onKeyDown={e => e.key === "Enter" && find()}
                 />
-                <button onClick={search} className="bg-blue-600 text-white px-5 rounded-xl">
-                  <SearchIcon />
-                </button>
+                <button onClick={find} className="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-2xl font-bold transition-transform active:scale-95">조회</button>
               </div>
-
-              {searched && (
+              {done && (
                 <div className="animate-fade-in-up">
-                  {results.length > 0 ? (
-                    results.map((s, i) => (
-                      <div key={i} className="bg-blue-50 border-2 border-blue-100 rounded-2xl p-6 text-center mb-4">
-                        <div className="text-blue-800 text-sm font-bold mb-1">{s.dept}</div>
-                        <div className="text-2xl font-bold mb-4">
-                          {s.name}{s.id && ` (${s.id})`} <span className="text-gray-400 font-normal">학생</span>
-                        </div>
-                        <div className="inline-block bg-blue-600 text-white px-10 py-3 rounded-full text-3xl font-black shadow-lg">
-                          {s.team}
-                        </div>
+                  {res.length > 0 ? res.map((s, i) => (
+                    <div key={i} className="bg-blue-50 border-2 border-blue-100 rounded-2xl p-6 text-center shadow-inner">
+                      <div className="text-blue-600 font-bold text-xs mb-1">{s.d}</div>
+                      <div className="text-2xl font-black text-gray-800 mb-4">
+                        {s.n}{s.s && ` (${s.s})`} <span className="text-gray-400 font-normal text-lg">학생</span>
                       </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-10 text-gray-400 font-bold border-2 border-dashed border-gray-100 rounded-2xl">
-                      명단에 없습니다.
+                      <div className="inline-block bg-blue-600 text-white px-10 py-3 rounded-full text-3xl font-black shadow-lg uppercase">{s.t}</div>
                     </div>
+                  )) : (
+                    <div className="text-center py-10 text-gray-300 font-bold bg-gray-50 rounded-2xl border-2 border-dashed">명단에 없습니다.</div>
                   )}
                 </div>
               )}
@@ -103,9 +88,7 @@
         </div>
       );
     }
-
-    const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<App />);
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
 </html>
